@@ -1,0 +1,7 @@
+# Build artifacts
+vendor/tree-sitter-julia/tree-sitter-julia.dylib
+*.dylib
+*.so
+*.o
+.DS_Store
+graphify-out/

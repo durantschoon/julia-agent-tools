@@ -1,0 +1,6 @@
+id: find-structs
+message: Found struct definition
+severity: info
+language: julia
+rule:
+  kind: struct_definition

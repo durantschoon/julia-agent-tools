@@ -1,0 +1,7 @@
+ruleDirs:
+  - rules
+customLanguages:
+  julia:
+    libraryPath: vendor/tree-sitter-julia/tree-sitter-julia.dylib
+    extensions: [jl]
+    expandoChar: $
