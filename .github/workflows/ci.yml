@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1.10'
+          - '1.11'
+          - '1.12'
+        os:
+          - ubuntu-latest
+          - macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Install ast-grep and universal-ctags (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y universal-ctags
+          npm install -g @ast-grep/cli
+
+      - name: Install ast-grep and universal-ctags (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install universal-ctags ast-grep
+
+      - name: Build Tree-Sitter dylib
+        run: make dylib
+
+      - name: Run ast-grep Tests
+        run: make test-ast
+
+      - name: Run Universal Ctags Tests
+        run: make test-ctags
+
+      - name: Run Julia Package Tests
+        uses: julia-actions/julia-runtest@v1

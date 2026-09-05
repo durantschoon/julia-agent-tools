@@ -131,15 +131,22 @@ JuliaAgentTools.install_directives("/path/to/target/repo"; agent=:all)
 
 ## 5. Verification & Testing
 
-Run all test suites across ast-grep, Universal Ctags, and the Julia package:
+Run all unit test suites across ast-grep, Universal Ctags, and the Julia package:
 ```bash
 make test
+```
+
+Run real-world multi-repo corpus stress-testing:
+```bash
+make test-corpus
 ```
 
 Expected output:
 - `ast-grep`: 14 passed, 0 failed.
 - Universal Ctags: all tag assertions passed.
 - `JuliaAgentTools`: 13 passed, 0 failed.
+- Corpus stress-testing: 63+ real-world files scanned with 0 errors across thousands of AST constructs.
+
 
 ---
 
