@@ -1,0 +1,26 @@
+id: find-functions
+snapshots:
+  ? |
+    function compute(a, b)
+        return a + b
+    end
+  : labels:
+    - source: |-
+        function compute(a, b)
+            return a + b
+        end
+      style: primary
+      start: 0
+      end: 43
+  ? |
+    function transform(p::Point{T}) where {T}
+        return p
+    end
+  : labels:
+    - source: |-
+        function transform(p::Point{T}) where {T}
+            return p
+        end
+      style: primary
+      start: 0
+      end: 58

@@ -1,0 +1,9 @@
+id: find-generated
+message: Found @generated function definition
+severity: info
+language: julia
+rule:
+  kind: macrocall_expression
+  has:
+    kind: macro_identifier
+    regex: '@generated'

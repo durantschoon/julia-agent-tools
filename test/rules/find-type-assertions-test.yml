@@ -1,0 +1,7 @@
+id: find-type-assertions
+valid:
+  - "x = 10"
+  - "y = foo(x)"
+invalid:
+  - "x::Int = 10"
+  - "function f(x::Float64) end"

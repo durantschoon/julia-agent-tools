@@ -1,0 +1,9 @@
+id: find-short-functions
+valid:
+  - "x = 10"
+  - "y = foo(10)"
+  - "z = bar(a, b) + 3"
+invalid:
+  - "f(x) = x + 1"
+  - "g(x, y) = x * y"
+  - "h(x::T) where {T} = x"

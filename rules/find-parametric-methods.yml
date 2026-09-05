@@ -1,0 +1,6 @@
+id: find-parametric-methods
+message: Found parametric method or type with where clause
+severity: info
+language: julia
+rule:
+  kind: where_expression

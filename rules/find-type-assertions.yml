@@ -1,0 +1,6 @@
+id: find-type-assertions
+message: Found typed expression or type assertion
+severity: info
+language: julia
+rule:
+  kind: typed_expression

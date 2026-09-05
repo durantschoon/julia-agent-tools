@@ -1,0 +1,13 @@
+id: find-functions
+valid:
+  - "struct Foo; x::Int; end"
+  - "x = 10"
+invalid:
+  - |
+    function compute(a, b)
+        return a + b
+    end
+  - |
+    function transform(p::Point{T}) where {T}
+        return p
+    end

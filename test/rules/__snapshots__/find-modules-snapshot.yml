@@ -1,0 +1,14 @@
+id: find-modules
+snapshots:
+  ? |
+    module MyGeometry
+        export Point
+    end
+  : labels:
+    - source: |-
+        module MyGeometry
+            export Point
+        end
+      style: primary
+      start: 0
+      end: 38

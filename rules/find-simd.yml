@@ -1,0 +1,9 @@
+id: find-simd
+message: Found @simd loop vectorization annotation
+severity: info
+language: julia
+rule:
+  kind: macrocall_expression
+  has:
+    kind: macro_identifier
+    regex: '@simd'

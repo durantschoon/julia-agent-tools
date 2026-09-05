@@ -1,0 +1,14 @@
+id: find-macros
+snapshots:
+  ? |
+    macro fast(expr)
+        esc(expr)
+    end
+  : labels:
+    - source: |-
+        macro fast(expr)
+            esc(expr)
+        end
+      style: primary
+      start: 0
+      end: 34

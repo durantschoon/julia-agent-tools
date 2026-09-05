@@ -1,0 +1,7 @@
+id: find-macrocalls
+valid:
+  - "function foo() end"
+  - "x = 1"
+invalid:
+  - "@inline foo(x) = x"
+  - "@inbounds a[i] = 1"

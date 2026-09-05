@@ -1,0 +1,14 @@
+id: find-macrocalls
+snapshots:
+  '@inbounds a[i] = 1':
+    labels:
+    - source: '@inbounds a[i] = 1'
+      style: primary
+      start: 0
+      end: 18
+  '@inline foo(x) = x':
+    labels:
+    - source: '@inline foo(x) = x'
+      style: primary
+      start: 0
+      end: 18

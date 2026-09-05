@@ -1,0 +1,11 @@
+id: find-structs
+valid:
+  - "x = 1"
+  - "abstract type AbstractFoo end"
+invalid:
+  - "struct Foo; x::Int; end"
+  - |
+    struct Point
+        x::Float64
+        y::Float64
+    end

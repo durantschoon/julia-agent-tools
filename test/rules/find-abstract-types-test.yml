@@ -1,0 +1,7 @@
+id: find-abstract-types
+valid:
+  - "struct Foo; x::Int; end"
+  - "f(x) = x"
+invalid:
+  - "abstract type AbstractGeometry end"
+  - "abstract type Joint{T} end"

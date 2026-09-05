@@ -1,0 +1,14 @@
+id: find-abstract-types
+snapshots:
+  abstract type AbstractGeometry end:
+    labels:
+    - source: abstract type AbstractGeometry end
+      style: primary
+      start: 0
+      end: 34
+  abstract type Joint{T} end:
+    labels:
+    - source: abstract type Joint{T} end
+      style: primary
+      start: 0
+      end: 26

@@ -1,0 +1,22 @@
+id: find-structs
+snapshots:
+  struct Foo; x::Int; end:
+    labels:
+    - source: struct Foo; x::Int; end
+      style: primary
+      start: 0
+      end: 23
+  ? |
+    struct Point
+        x::Float64
+        y::Float64
+    end
+  : labels:
+    - source: |-
+        struct Point
+            x::Float64
+            y::Float64
+        end
+      style: primary
+      start: 0
+      end: 46

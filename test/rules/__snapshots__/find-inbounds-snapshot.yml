@@ -1,0 +1,28 @@
+id: find-inbounds
+snapshots:
+  '@inbounds a[i] = 0':
+    labels:
+    - source: '@inbounds a[i] = 0'
+      style: primary
+      start: 0
+      end: 18
+    - source: '@inbounds'
+      style: secondary
+      start: 0
+      end: 9
+  ? |
+    @inbounds for i in 1:10
+        a[i] = b[i]
+    end
+  : labels:
+    - source: |-
+        @inbounds for i in 1:10
+            a[i] = b[i]
+        end
+      style: primary
+      start: 0
+      end: 43
+    - source: '@inbounds'
+      style: secondary
+      start: 0
+      end: 9

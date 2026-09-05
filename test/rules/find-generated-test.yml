@@ -1,0 +1,9 @@
+id: find-generated
+valid:
+  - "function foo(x) x end"
+  - "@inline foo(x) = x"
+invalid:
+  - |
+    @generated function fast_pow(x, ::Val{N}) where {N}
+        return :(x^N)
+    end

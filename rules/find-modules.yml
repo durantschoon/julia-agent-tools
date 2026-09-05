@@ -1,0 +1,6 @@
+id: find-modules
+message: Found module definition
+severity: info
+language: julia
+rule:
+  kind: module_definition

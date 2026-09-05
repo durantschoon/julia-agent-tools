@@ -1,0 +1,6 @@
+id: find-mutable-structs
+valid:
+  - "struct ImmutablePoint; x::Float64; end"
+  - "abstract type Point end"
+invalid:
+  - "mutable struct MutablePoint; x::Float64; end"

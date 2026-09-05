@@ -1,0 +1,17 @@
+id: find-parametric-methods
+snapshots:
+  'f(x::T) where {T <: Real} = x':
+    labels:
+    - source: 'f(x::T) where {T <: Real}'
+      style: primary
+      start: 0
+      end: 25
+  ? |
+    function g(v::AbstractVector{T}) where {T}
+        return v[1]
+    end
+  : labels:
+    - source: g(v::AbstractVector{T}) where {T}
+      style: primary
+      start: 9
+      end: 42

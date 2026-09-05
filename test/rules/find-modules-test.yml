@@ -1,0 +1,9 @@
+id: find-modules
+valid:
+  - "function foo() end"
+  - "struct S; end"
+invalid:
+  - |
+    module MyGeometry
+        export Point
+    end

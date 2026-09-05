@@ -1,0 +1,26 @@
+id: lint-untyped-struct-field
+snapshots:
+  ? |
+    struct BadStruct
+        x
+        y::Float64
+    end
+  : labels:
+    - source: x
+      style: primary
+      start: 21
+      end: 22
+    - source: |-
+        struct BadStruct
+            x
+            y::Float64
+        end
+      style: secondary
+      start: 0
+      end: 41
+    - source: |
+        x
+            y::Float64
+      style: secondary
+      start: 21
+      end: 38

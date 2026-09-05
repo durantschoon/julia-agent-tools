@@ -1,0 +1,22 @@
+id: lint-untyped-struct-field
+message: "Untyped struct field detected: add type annotation (::T) to avoid heap allocation and type instability."
+severity: warning
+language: julia
+rule:
+  kind: identifier
+  inside:
+    kind: block
+    inside:
+      kind: struct_definition
+  not:
+    any:
+      - inside:
+          kind: typed_expression
+      - inside:
+          kind: call_expression
+      - inside:
+          kind: assignment
+      - inside:
+          kind: function_definition
+      - inside:
+          kind: macrocall_expression

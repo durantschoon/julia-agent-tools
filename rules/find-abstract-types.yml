@@ -1,0 +1,6 @@
+id: find-abstract-types
+message: Found abstract type definition
+severity: info
+language: julia
+rule:
+  kind: abstract_definition

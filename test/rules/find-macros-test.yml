@@ -1,0 +1,9 @@
+id: find-macros
+valid:
+  - "function foo() end"
+  - "x = 1"
+invalid:
+  - |
+    macro fast(expr)
+        esc(expr)
+    end

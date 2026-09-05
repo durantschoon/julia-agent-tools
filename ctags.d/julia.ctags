@@ -1,0 +1,24 @@
+# Universal Ctags Optlib Configuration for Julia
+# Provides enhanced tag definitions for Julia language constructs:
+# - Abstract types (kind 'a')
+# - Mutable structs (kind 'M')
+# - Enums via @enum (kind 'e')
+# - Type aliases (kind 'T')
+# - Inlined functions (kind 'i')
+
+--kinddef-Julia=a,abstract,abstract types
+--kinddef-Julia=M,mutablestruct,mutable structs
+--kinddef-Julia=e,enum,enums
+--kinddef-Julia=T,typealias,type aliases
+
+# Match: abstract type TypeName{T} <: SuperType end
+--regex-Julia=/^[ \t]*abstract[ \t]+type[ \t]+([a-zA-Z0-9_!]+)/\1/a,abstract/
+
+# Match: mutable struct TypeName{T} ... end
+--regex-Julia=/^[ \t]*mutable[ \t]+struct[ \t]+([a-zA-Z0-9_!]+)/\1/M,mutablestruct/
+
+# Match: @enum EnumName Val1 Val2
+--regex-Julia=/^[ \t]*@enum[ \t]+([a-zA-Z0-9_!]+)/\1/e,enum/
+
+# Match: const TypeAlias = ParametricType{...} or Union{...}
+--regex-Julia=/^[ \t]*const[ \t]+([A-Z][a-zA-Z0-9_!]*)[ \t]*=[ \t]*(Union\{|[A-Z][a-zA-Z0-9_!]*\{)/\1/T,typealias/

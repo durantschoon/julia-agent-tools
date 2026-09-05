@@ -1,0 +1,14 @@
+id: find-type-assertions
+snapshots:
+  function f(x::Float64) end:
+    labels:
+    - source: x::Float64
+      style: primary
+      start: 11
+      end: 21
+  x::Int = 10:
+    labels:
+    - source: x::Int
+      style: primary
+      start: 0
+      end: 6

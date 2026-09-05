@@ -1,0 +1,6 @@
+id: find-macrocalls
+message: Found macrocall expression
+severity: info
+language: julia
+rule:
+  kind: macrocall_expression

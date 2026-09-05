@@ -1,0 +1,9 @@
+id: find-inbounds
+message: Found @inbounds annotation
+severity: info
+language: julia
+rule:
+  kind: macrocall_expression
+  has:
+    kind: macro_identifier
+    regex: '@inbounds'

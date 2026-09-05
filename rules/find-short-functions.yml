@@ -1,0 +1,12 @@
+id: find-short-functions
+message: Found short-form function definition
+severity: info
+language: julia
+rule:
+  kind: assignment
+  has:
+    any:
+      - kind: call_expression
+      - kind: where_expression
+    precedes:
+      regex: '^=$'

@@ -1,0 +1,18 @@
+id: lint-untyped-struct-field
+valid:
+  - |
+    struct Point
+        x::Float64
+        y::Float64
+    end
+  - |
+    struct Foo{T}
+        data::T
+        Foo{T}(data::T) where {T} = new{T}(data)
+    end
+invalid:
+  - |
+    struct BadStruct
+        x
+        y::Float64
+    end

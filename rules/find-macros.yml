@@ -1,0 +1,6 @@
+id: find-macros
+message: Found macro definition
+severity: info
+language: julia
+rule:
+  kind: macro_definition

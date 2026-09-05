@@ -1,0 +1,12 @@
+id: find-mutable-structs
+snapshots:
+  mutable struct MutablePoint; x::Float64; end:
+    labels:
+    - source: mutable struct MutablePoint; x::Float64; end
+      style: primary
+      start: 0
+      end: 44
+    - source: mutable
+      style: secondary
+      start: 0
+      end: 7

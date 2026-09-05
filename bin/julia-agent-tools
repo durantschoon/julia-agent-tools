@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+SG_CONFIG="${ROOT_DIR}/sgconfig.yml"
+CTAGS_OPT="${ROOT_DIR}/ctags.d/julia.ctags"
+
+usage() {
+    cat << EOF
+julia-agent-tools: High-performance Developer & LLM Agent Tooling for Julia
+
+Usage:
+  julia-agent-tools <command> [arguments...]
+
+Commands:
+  scan [PATH]              Run ast-grep scan using Julia rules (default: .)
+  run [ARGS...]            Run ast-grep with Julia custom language config
+  tags [PATH] [OUT]        Generate Universal Ctags using Julia optlib (default: . tags)
+  install-directives DIR   Install AGENTS.md, CLAUDE.md, and rules into target directory
+  install-ctags            Install julia.ctags into ~/.ctags.d/
+  test                     Run all ast-grep, ctags, and package tests
+  help                     Show this help message
+
+Examples:
+  julia-agent-tools scan src/
+  julia-agent-tools run -k struct_definition src/
+  julia-agent-tools tags src/ tags
+  julia-agent-tools install-directives /path/to/my-julia-repo
+EOF
+    exit 0
+}
+
+if [[ $# -eq 0 ]]; then
+    usage
+fi
+
+COMMAND="$1"
+shift
+
+case "${COMMAND}" in
+    scan)
+        TARGET="${1:-.}"
+        ast-grep scan -c "${SG_CONFIG}" "${TARGET}"
+        ;;
+    run)
+        ast-grep run -c "${SG_CONFIG}" "$@"
+        ;;
+    tags)
+        TARGET="${1:-.}"
+        OUT="${2:-tags}"
+        ctags --options="${CTAGS_OPT}" -f "${OUT}" -R "${TARGET}"
+        echo "Generated ctags at ${OUT} for ${TARGET}"
+        ;;
+    install-directives)
+        if [[ $# -eq 0 ]]; then
+            echo "Error: Target directory required."
+            echo "Usage: julia-agent-tools install-directives <target-dir>"
+            exit 1
+        fi
+        TARGET_DIR="$1"
+        julia --project="${ROOT_DIR}" -e "using JuliaAgentTools; install_directives(\"${TARGET_DIR}\"; agent=:all)"
+        ;;
+    install-ctags)
+        mkdir -p "${HOME}/.ctags.d"
+        cp "${CTAGS_OPT}" "${HOME}/.ctags.d/julia.ctags"
+        echo "Installed julia.ctags to ${HOME}/.ctags.d/julia.ctags"
+        ;;
+    test)
+        echo "==> Running ast-grep rule tests..."
+        ast-grep test -c "${SG_CONFIG}"
+        echo "==> Running ctags tests..."
+        "${ROOT_DIR}/test/test_ctags.sh"
+        echo "==> Running Julia package tests..."
+        julia --project="${ROOT_DIR}" -e 'using Pkg; Pkg.test()'
+        echo "All tests passed successfully!"
+        ;;
+    help|--help|-h)
+        usage
+        ;;
+    *)
+        echo "Unknown command: ${COMMAND}"
+        usage
+        ;;
+esac

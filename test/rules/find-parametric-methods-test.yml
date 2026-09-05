@@ -1,0 +1,10 @@
+id: find-parametric-methods
+valid:
+  - "f(x::Int) = x + 1"
+  - "function g(x::Float64) x end"
+invalid:
+  - "f(x::T) where {T <: Real} = x"
+  - |
+    function g(v::AbstractVector{T}) where {T}
+        return v[1]
+    end

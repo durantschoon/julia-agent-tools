@@ -1,0 +1,8 @@
+id: find-mutable-structs
+message: Found mutable struct definition
+severity: info
+language: julia
+rule:
+  kind: struct_definition
+  has:
+    pattern: mutable

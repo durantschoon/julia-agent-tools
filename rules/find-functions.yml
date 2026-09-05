@@ -1,0 +1,6 @@
+id: find-functions
+message: Found function definition
+severity: info
+language: julia
+rule:
+  kind: function_definition
