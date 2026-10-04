@@ -1,0 +1,13 @@
+id: lint-abstract-struct-field
+message: "Abstract or highly generic type ($TYPE) in struct field causes type instability and heap allocations. Parameterize the struct instead."
+severity: warning
+language: julia
+rule:
+  pattern: $FIELD::$TYPE
+  inside:
+    kind: block
+    inside:
+      kind: struct_definition
+constraints:
+  TYPE:
+    regex: "^(Abstract.*|Any|Number|Real|Integer|Function)$"
