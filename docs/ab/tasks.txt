@@ -1,0 +1,10 @@
+Add a struct `Interval` with two floating-point fields, `lo` and `hi`, and a function `width(i::Interval)`. Add a test.
+Add a function `sumsq(v)` that returns the sum of squares of a `Vector{Float64}`, written so the loop allocates nothing. Add a test.
+Add a parametric struct `Pair2{T}` that holds two values of the same type `T`, with a constructor that rejects mismatched types. Add a test.
+Add a function `scale(x, k)` that multiplies `x` by `k`, with a specialised method for floating-point `k` and a general fallback for any `Number` `k`. Add tests for both.
+Add a test that asserts an existing hot function in this package allocates nothing when called with typical arguments.
+Add a struct `Batch` that holds many 3-component vectors and a function `normalize_all!(b::Batch)` that normalizes every vector in place. Add a test.
+Add a function `rmsnorm(xs)` computing the root-mean-square of a collection of `Float64`, and an in-place variant `rmsnorm!(out, xs)` that writes per-chunk results into a preallocated output vector. Add tests.
+Add a threaded function `parallel_sum(v)` that sums chunks of a `Vector{Float64}` across threads and combines the partial sums. Add a test that checks it against `sum`.
+Add a `Polynomial` struct holding a coefficient vector and `evaluate(p, x)` using Horner's rule. Add a test.
+Add `clamp_all!(v, lo, hi)` that clamps each element of a vector in place, and a value-returning `clamp_all(v, lo, hi)`. Add tests for both.
