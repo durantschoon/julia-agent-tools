@@ -7,7 +7,10 @@ ifeq ($(UNAME_S),Darwin)
     CC := clang
     DYLIB_FLAGS := -arch x86_64 -arch arm64
 else
-    CC ?= gcc
+    # make predefines CC=cc, so `?=` never fires; only override make's own default
+    ifeq ($(origin CC),default)
+        CC := gcc
+    endif
     DYLIB_FLAGS :=
 endif
 
