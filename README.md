@@ -8,6 +8,7 @@ Provides:
 - **Agent Directives & Rules**: Battle-tested drop-ins for `CLAUDE.md`, `AGENTS.md`, Cursor (`.cursorrules`), and Antigravity (`.agents/rules/`, workflows) enforcing type stability, zero-allocation hot paths, and precompilation hygiene.
 - **`JuliaAgentTools.jl` Package**: Standard Julia package API for memory allocation audits, type stability validation, tags generation, and directive installation.
 - **CLI Utility**: `bin/julia-agent-tools` for zero-friction command-line scanning, running, and tagging.
+- **Lessons** ([`docs/lessons.md`](docs/lessons.md)): twelve Julia pitfalls met while building a library with coding agents, each as symptom, cause, rule and example. The directives and `lint-*` rules are drawn from them.
 
 ---
 
@@ -45,6 +46,10 @@ make test-ast
 | `find-simd` | Loop vectorization `@simd` annotations | `@simd` |
 | `find-generated` | `@generated` metaprogrammed functions | `@generated` |
 | `lint-untyped-struct-field` | Flags untyped struct fields (causes boxing) | `identifier` field |
+| `lint-abstract-struct-field` | Flags abstract or over-generic field types (`Any`, `Number`, `Abstract*`) | `typed_expression` in a struct |
+| `lint-allocated-outside-function` | Flags `@allocated` at top level, where it measures the wrong thing | `macrocall_expression` |
+| `lint-overlapping-supertype-method` | Flags a `::Real`-style method beside a `where {T <: Real}` method of the same name (precompilation overwrite) | neighbouring `function_definition`s |
+| `lint-unchecked-type-parameter` | Flags a struct with a type parameter but no inner constructor to guard it | `struct_definition` |
 
 ### CLI Usage
 ```bash
@@ -142,11 +147,30 @@ make test-corpus
 ```
 
 Expected output:
-- `ast-grep`: 14 passed, 0 failed.
+- `ast-grep`: 17 passed, 0 failed.
 - Universal Ctags: all tag assertions passed.
 - `JuliaAgentTools`: 13 passed, 0 failed.
 - Corpus stress-testing: 63+ real-world files scanned with 0 errors across thousands of AST constructs.
 
+
+---
+
+## Works with graphify
+
+graphify builds a knowledge graph of a codebase from its syntax tree, which
+agents query for architecture and relationships instead of reading files
+one by one. It is a separate tool, not shipped here; its Julia graphs rest on
+the same upstream `tree-sitter-julia` grammar this repo vendors and builds,
+and the directives tell agents to query the graph for architecture and
+relationships and to refresh it after changing code. The three commands the Claude directive lists:
+
+```bash
+graphify query "<concept or question>"     # ask about architecture or relationships
+graphify path "<SymbolA>" "<SymbolB>"      # how two symbols connect
+graphify update .                          # refresh the graph after code changes
+```
+
+Its output directory, `graphify-out/`, is already in `.gitignore`.
 
 ---
 

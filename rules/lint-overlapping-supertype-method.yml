@@ -1,0 +1,20 @@
+id: lint-overlapping-supertype-method
+message: "$F(::$S) has the same signature as $F(::T) where {T <: $S}: whichever is defined second overwrites the first, and precompilation aborts. Narrow the parametric method (for example T <: AbstractFloat) so the two are disjoint."
+severity: error
+language: julia
+rule:
+  all:
+    - any:
+        - pattern: '$F($X::$S) = $BODY'
+        - pattern: 'function $F($X::$S) $$$ end'
+    - any:
+        - follows:
+            stopBy: end
+            any:
+              - pattern: '$F($Y::$T) where {$T <: $S} = $OTHER'
+              - pattern: 'function $F($Y::$T) where {$T <: $S} $$$ end'
+        - precedes:
+            stopBy: end
+            any:
+              - pattern: '$F($Y::$T) where {$T <: $S} = $OTHER'
+              - pattern: 'function $F($Y::$T) where {$T <: $S} $$$ end'

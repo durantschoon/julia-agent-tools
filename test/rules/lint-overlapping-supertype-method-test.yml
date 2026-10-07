@@ -1,0 +1,31 @@
+id: lint-overlapping-supertype-method
+valid:
+  - |
+    half(x::T) where {T <: AbstractFloat} = x / 2
+    half(x::Real) = half(Float64(x))
+  - |
+    function half(x::T) where {T <: AbstractFloat}
+        return x / 2
+    end
+    function half(x::Real)
+        return half(Float64(x))
+    end
+  - |
+    half(x::T) where {T <: Real} = x / 2
+    twice(x::Real) = 2x
+  - |
+    half(x::Real) = x / 2
+invalid:
+  - |
+    half(x::T) where {T <: Real} = x / 2
+    half(x::Real) = half(float(x))
+  - |
+    half(x::Number) = x / 2
+    half(x::T) where {T <: Number} = x / 2
+  - |
+    function half(x::T) where {T <: Real}
+        return x / 2
+    end
+    function half(x::Real)
+        return half(float(x))
+    end

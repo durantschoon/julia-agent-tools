@@ -1,0 +1,34 @@
+id: lint-unchecked-type-parameter
+valid:
+  - |
+    struct Wrapped{T}
+        value::T
+    end
+  - |
+    struct Tagged{K, T}
+        data::Vector{T}
+        function Tagged{K, T}(data::Vector{T}) where {K, T}
+            length(data) == K || throw(ArgumentError("expected $K entries"))
+            return new{K, T}(data)
+        end
+    end
+  - |
+    struct Tagged{K, T}
+        data::Vector{T}
+        Tagged{K, T}(::Val{:unchecked}, data::Vector{T}) where {K, T} = new{K, T}(data)
+    end
+  - |
+    struct Marker{S} end
+invalid:
+  - |
+    struct Tagged{K, T}
+        data::Vector{T}
+    end
+  - |
+    struct Unit{D, T <: Real} <: AbstractQuantity
+        value::T
+    end
+  - |
+    struct Flagged{F}
+        count::Int
+    end

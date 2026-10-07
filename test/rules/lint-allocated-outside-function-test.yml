@@ -1,0 +1,26 @@
+id: lint-allocated-outside-function
+valid:
+  - |
+    function bytes_for(a, b)
+        @allocated a * b
+    end
+  - |
+    bytes_for(a, b) = @allocated a * b
+  - |
+    function count_allocs(xs)
+        return @allocations sum(xs)
+    end
+  - |
+    @testset "hot path" begin
+        @test bytes_for(x, y) == 0
+    end
+invalid:
+  - |
+    @test @allocated(a * b) == 0
+  - |
+    @testset "hot path" begin
+        bytes = @allocated a * b
+        @test bytes == 0
+    end
+  - |
+    n = @allocations sum(xs)

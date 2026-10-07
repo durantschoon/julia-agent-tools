@@ -1,0 +1,48 @@
+id: lint-overlapping-supertype-method
+snapshots:
+  ? |
+    function half(x::T) where {T <: Real}
+        return x / 2
+    end
+    function half(x::Real)
+        return half(float(x))
+    end
+  : labels:
+    - source: |-
+        function half(x::Real)
+            return half(float(x))
+        end
+      style: primary
+      start: 59
+      end: 111
+    - source: |-
+        function half(x::T) where {T <: Real}
+            return x / 2
+        end
+      style: secondary
+      start: 0
+      end: 58
+  ? |
+    half(x::Number) = x / 2
+    half(x::T) where {T <: Number} = x / 2
+  : labels:
+    - source: half(x::Number) = x / 2
+      style: primary
+      start: 0
+      end: 23
+    - source: 'half(x::T) where {T <: Number} = x / 2'
+      style: secondary
+      start: 24
+      end: 62
+  ? |
+    half(x::T) where {T <: Real} = x / 2
+    half(x::Real) = half(float(x))
+  : labels:
+    - source: half(x::Real) = half(float(x))
+      style: primary
+      start: 37
+      end: 67
+    - source: 'half(x::T) where {T <: Real} = x / 2'
+      style: secondary
+      start: 0
+      end: 36

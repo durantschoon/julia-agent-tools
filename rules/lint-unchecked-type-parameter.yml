@@ -1,0 +1,39 @@
+id: lint-unchecked-type-parameter
+message: "Type parameter $K is not used by any field and the struct has no inner constructor, so the generated default constructor accepts any $K unchecked. Declare an inner constructor so every construction path goes through the check."
+severity: warning
+language: julia
+rule:
+  kind: identifier
+  pattern: $K
+  inside:
+    kind: curly_expression
+    inside:
+      kind: parametrized_type_expression
+      any:
+        - inside:
+            kind: type_head
+        - nthChild: 1
+          inside:
+            kind: binary_expression
+            inside:
+              kind: type_head
+      inside:
+        stopBy: end
+        kind: struct_definition
+        has:
+          kind: block
+          not:
+            any:
+              - has:
+                  stopBy: end
+                  pattern: $K
+              - has:
+                  kind: function_definition
+              - has:
+                  kind: assignment
+                  has:
+                    any:
+                      - kind: call_expression
+                      - kind: where_expression
+                    precedes:
+                      regex: '^=$'

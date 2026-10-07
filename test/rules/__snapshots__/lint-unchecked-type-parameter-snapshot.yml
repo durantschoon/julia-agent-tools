@@ -1,0 +1,105 @@
+id: lint-unchecked-type-parameter
+snapshots:
+  ? |
+    struct Flagged{F}
+        count::Int
+    end
+  : labels:
+    - source: F
+      style: primary
+      start: 15
+      end: 16
+    - source: Flagged{F}
+      style: secondary
+      start: 7
+      end: 17
+    - source: |
+        count::Int
+      style: secondary
+      start: 22
+      end: 33
+    - source: |-
+        struct Flagged{F}
+            count::Int
+        end
+      style: secondary
+      start: 0
+      end: 36
+    - source: Flagged{F}
+      style: secondary
+      start: 7
+      end: 17
+    - source: '{F}'
+      style: secondary
+      start: 14
+      end: 17
+  ? |
+    struct Tagged{K, T}
+        data::Vector{T}
+    end
+  : labels:
+    - source: K
+      style: primary
+      start: 14
+      end: 15
+    - source: Tagged{K, T}
+      style: secondary
+      start: 7
+      end: 19
+    - source: |
+        data::Vector{T}
+      style: secondary
+      start: 24
+      end: 40
+    - source: |-
+        struct Tagged{K, T}
+            data::Vector{T}
+        end
+      style: secondary
+      start: 0
+      end: 43
+    - source: Tagged{K, T}
+      style: secondary
+      start: 7
+      end: 19
+    - source: '{K, T}'
+      style: secondary
+      start: 13
+      end: 19
+  ? |
+    struct Unit{D, T <: Real} <: AbstractQuantity
+        value::T
+    end
+  : labels:
+    - source: D
+      style: primary
+      start: 12
+      end: 13
+    - source: 'Unit{D, T <: Real} <: AbstractQuantity'
+      style: secondary
+      start: 7
+      end: 45
+    - source: 'Unit{D, T <: Real} <: AbstractQuantity'
+      style: secondary
+      start: 7
+      end: 45
+    - source: |
+        value::T
+      style: secondary
+      start: 50
+      end: 59
+    - source: |-
+        struct Unit{D, T <: Real} <: AbstractQuantity
+            value::T
+        end
+      style: secondary
+      start: 0
+      end: 62
+    - source: 'Unit{D, T <: Real}'
+      style: secondary
+      start: 7
+      end: 25
+    - source: '{D, T <: Real}'
+      style: secondary
+      start: 11
+      end: 25

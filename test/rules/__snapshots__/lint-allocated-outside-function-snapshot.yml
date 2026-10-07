@@ -1,0 +1,38 @@
+id: lint-allocated-outside-function
+snapshots:
+  ? |
+    @test @allocated(a * b) == 0
+  : labels:
+    - source: '@allocated(a * b)'
+      style: primary
+      start: 6
+      end: 23
+    - source: '@allocated'
+      style: secondary
+      start: 6
+      end: 16
+  ? |
+    @testset "hot path" begin
+        bytes = @allocated a * b
+        @test bytes == 0
+    end
+  : labels:
+    - source: '@allocated a * b'
+      style: primary
+      start: 38
+      end: 54
+    - source: '@allocated'
+      style: secondary
+      start: 38
+      end: 48
+  ? |
+    n = @allocations sum(xs)
+  : labels:
+    - source: '@allocations sum(xs)'
+      style: primary
+      start: 4
+      end: 24
+    - source: '@allocations'
+      style: secondary
+      start: 4
+      end: 16

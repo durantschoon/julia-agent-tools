@@ -23,6 +23,7 @@ from_scalar(s::Real) = ...
 from_scalar(s::T) where {T <: AbstractFloat} = ...
 from_scalar(s::Real) = from_scalar(Float64(s))
 ```
+`ast-grep scan` reports the failing pair as `lint-overlapping-supertype-method`.
 
 ### Invariant 2: Value Semantics & Mutation Symmetry
 For high-throughput geometric or algebraic operations:
@@ -47,6 +48,7 @@ function test_alloc_free(x, y)
 end
 @test test_alloc_free(a, b) == 0
 ```
+`ast-grep scan` reports the first form as `lint-allocated-outside-function`.
 
 ### Invariant 4: Fully Parametrized Struct Fields
 Every field in every struct must have a concrete type or concrete type parameter:
@@ -67,6 +69,50 @@ Empty JSON arrays in `JSON3` parse to `Union{}`. Prevent `ArgumentError` by expl
 ```julia
 val = Float64(entry[:value])
 ```
+
+### Invariant 6: Inner Constructors Guard Type Parameters
+A type parameter that carries meaning (a size, a tag, a unit) is only an invariant once the generated default constructor is gone. Declare an inner constructor that checks it:
+```julia
+# ❌ ANY K ACCEPTED (default constructor skips every check; lint-unchecked-type-parameter):
+struct Tagged{K, T}
+    data::Vector{T}
+end
+
+# ✅ CORRECT (one inner constructor suppresses the defaults):
+struct Tagged{K, T}
+    data::Vector{T}
+    function Tagged{K, T}(data::Vector{T}) where {K, T}
+        length(data) == K || throw(ArgumentError("expected $K entries"))
+        return new{K, T}(data)
+    end
+end
+```
+
+### Invariant 7: Methods, Not Adapter Names
+Accept a new argument type by adding a method to the existing function, not by porting `from_x` / `compute_y_with_z` adapter names. Dispatch then rejects a wrongly typed argument with a `MethodError`:
+```julia
+# ❌ area_from_lengths(w::Length, h::Length)
+# ✅ area(w::Length, h::Length) = area(meters(w), meters(h))
+```
+
+### Invariant 8: The Oracle Is the Public API
+Tests compare exported functions against the oracle. Test a converting method against the raw call on the same converted inputs, never against a typed-in decimal (`9.0 * 1e-3 !== 0.009`). A test helper that reimplements the behaviour under test hides a gap; delete it or move it into the package:
+```julia
+# ❌ @test normalise_in_test(raw) == expected
+# ✅ @test MyPkg.parse_terms(raw) == expected
+# ✅ @test area(cm(90.0), cm(10.0)) === area(meters(cm(90.0)), meters(cm(10.0)))
+```
+Use `===` only on immutable values; on a `Vector` it compares identity.
+
+### Invariant 9: Check New Names Against the Loaded Module
+Before defining or exporting a top-level name, check it against the built package, whose bindings include everything its `using` statements imported. `isdefined(Base, sym)` is not enough:
+```julia
+filter(s -> isdefined(MyPkg, s), [:NewNameA, :NewNameB])   # must be empty
+@test isempty(Test.detect_ambiguities(MyPkg; recursive = false))
+```
+
+### Invariant 10: Thread Only Memoryless Kernels
+Threaded results equal serial results bit for bit only when the kernel is element-wise: no reduction, no accumulator, no `@fastmath`, no mutable globals. Add a separate `f_parallel!` entry point that calls the serial kernel per chunk; never make an existing function start spawning tasks. Before starting, search for `Ref{` and non-`const` globals and run the suite at `-t 1` and `-t 4`; afterwards assert `==` (not `≈`) between the two paths.
 
 ---
 

@@ -1,0 +1,21 @@
+id: lint-allocated-outside-function
+message: "@allocated outside a function body measures the global-variable boxing of the call site, not the code under test. Wrap the measured call in a function and test that function's result."
+severity: warning
+language: julia
+rule:
+  kind: macrocall_expression
+  has:
+    kind: macro_identifier
+    regex: '^@(allocated|allocations)$'
+  not:
+    inside:
+      stopBy: end
+      any:
+        - kind: function_definition
+        - kind: assignment
+          has:
+            any:
+              - kind: call_expression
+              - kind: where_expression
+            precedes:
+              regex: '^=$'
