@@ -157,7 +157,7 @@ Expected output:
 
 ## Works with graphify
 
-graphify builds a knowledge graph of a codebase from its syntax tree, which
+[graphify](https://github.com/Graphify-Labs/graphify) (`uv tool install graphifyy`; the PyPI name has two y's) builds a knowledge graph of a codebase from its syntax tree, which
 agents query for architecture and relationships instead of reading files
 one by one. It is a separate tool, not shipped here; its Julia graphs rest on
 the same upstream `tree-sitter-julia` grammar this repo vendors and builds,
