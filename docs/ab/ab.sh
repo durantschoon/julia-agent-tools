@@ -35,6 +35,8 @@ SRC=${1:?usage: ab.sh /path/to/a/julia/project (or --check)}
 for side in bare tooled; do
   rm -rf "$OUT/$side"; git clone -q "$SRC" "$OUT/$side"
   rm -rf "$OUT/$side/.claude" "$OUT/$side/.agents" "$OUT/$side/.codex"   # host-specific agent hooks; removed on both sides alike
+  git -C "$OUT/$side" config commit.gpgsign false   # throwaway clones: no signing prompts, 22 commits per run
+  git -C "$OUT/$side" config user.name "ab" ; git -C "$OUT/$side" config user.email "ab@localhost"
   git -C "$OUT/$side" add -A && git -C "$OUT/$side" commit -q -m "ab: baseline ($side)" --allow-empty
 done
 julia --project="$JAT" -e 'using JuliaAgentTools; install_directives(ARGS[1]; overwrite=true)' "$OUT/tooled" >> "$OUT/run.log" 2>&1
