@@ -16,6 +16,7 @@ export PATH="$HOME/.juliaup/bin:$PATH"
 HERE=$(cd "$(dirname "$0")" && pwd); JAT=$(cd "$HERE/../.." && pwd)
 TASKS="${AB_TASKS:-$HERE/tasks.txt}"
 RUNS_DIR=$(git -C "$JAT" config --get ab.runsDir 2>/dev/null || echo "$HOME/ab-runs")   # per-checkout default: git config ab.runsDir /some/dir
+RUNS_DIR=${RUNS_DIR/#\~/$HOME}   # a leading ~ in the config value means $HOME, so one checkout shared by two machines works
 OUT="${AB_OUT:-$RUNS_DIR/$(date +%Y%m%d-%H%M%S)}"; mkdir -p "$OUT"
 if command -v ast-grep >/dev/null 2>&1; then SCAN="ast-grep scan -c $JAT/sgconfig.yml --filter ^lint-"
 elif command -v guix >/dev/null 2>&1; then SCAN="guix shell ast-grep -- ast-grep scan -c $JAT/sgconfig.yml --filter ^lint-"
