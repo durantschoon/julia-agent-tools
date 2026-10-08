@@ -7,14 +7,16 @@
 #   docs/ab/ab.sh --check                          # tool versions + scanner self-check, no agent runs
 #
 # Needs: julia, claude (Claude Code CLI), ast-grep (on PATH, or Guix), and `make dylib`
-# run once in this repo. Results go to $AB_OUT (default ~/ab-runs/<timestamp>/):
+# run once in this repo. Results go to $AB_OUT, default <runs dir>/<timestamp>/ where the
+# runs dir is `git config ab.runsDir` in this checkout, else ~/ab-runs:
 # scores.tsv, run.log, one log per agent run, one log per test run, and the two
 # clones with one branch per task so every diff can be reviewed.
 set -uo pipefail
 export PATH="$HOME/.juliaup/bin:$PATH"
 HERE=$(cd "$(dirname "$0")" && pwd); JAT=$(cd "$HERE/../.." && pwd)
 TASKS="${AB_TASKS:-$HERE/tasks.txt}"
-OUT="${AB_OUT:-$HOME/ab-runs/$(date +%Y%m%d-%H%M%S)}"; mkdir -p "$OUT"
+RUNS_DIR=$(git -C "$JAT" config --get ab.runsDir 2>/dev/null || echo "$HOME/ab-runs")   # per-checkout default: git config ab.runsDir /some/dir
+OUT="${AB_OUT:-$RUNS_DIR/$(date +%Y%m%d-%H%M%S)}"; mkdir -p "$OUT"
 if command -v ast-grep >/dev/null 2>&1; then SCAN="ast-grep scan -c $JAT/sgconfig.yml --filter ^lint-"
 elif command -v guix >/dev/null 2>&1; then SCAN="guix shell ast-grep -- ast-grep scan -c $JAT/sgconfig.yml --filter ^lint-"
 else echo "need ast-grep on PATH (or Guix)" >&2; exit 1; fi

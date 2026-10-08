@@ -62,6 +62,7 @@ Per task (hits introduced / test suite), from [`ab/scores.tsv`](ab/scores.tsv):
 make dylib                                   # once, in this repo
 docs/ab/ab.sh --check                       # tool versions and a scanner self-check
 docs/ab/ab.sh /path/to/your/julia/project    # ~90 min; results in ~/ab-runs/<timestamp>/
+                                             # (or `git config ab.runsDir DIR` to choose the base dir)
 ```
 
 The script clones the project twice, installs the directives on one copy,
