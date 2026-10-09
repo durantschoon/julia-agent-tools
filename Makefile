@@ -23,8 +23,12 @@ dylib:
 
 test: test-ast test-ctags test-julia
 
+# ast-grep 0.50+ refuses native custom-language libraries unless told otherwise; older
+# versions do not know the option. Detect it once.
+SG_POLICY := $(shell ast-grep --help 2>/dev/null | grep -q -- --custom-languages && echo --custom-languages allow)
+
 test-ast: dylib
-	ast-grep test -c sgconfig.yml
+	ast-grep test $(SG_POLICY) -c sgconfig.yml
 
 test-ctags:
 	./test/test_ctags.sh

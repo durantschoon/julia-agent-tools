@@ -18,9 +18,11 @@ TASKS="${AB_TASKS:-$HERE/tasks.txt}"
 RUNS_DIR=$(git -C "$JAT" config --get ab.runsDir 2>/dev/null || echo "$HOME/ab-runs")   # per-checkout default: git config ab.runsDir /some/dir
 RUNS_DIR=${RUNS_DIR/#\~/$HOME}   # a leading ~ in the config value means $HOME, so one checkout shared by two machines works
 OUT="${AB_OUT:-$RUNS_DIR/$(date +%Y%m%d-%H%M%S)}"; mkdir -p "$OUT"
-if command -v ast-grep >/dev/null 2>&1; then SCAN="ast-grep scan -c $JAT/sgconfig.yml --filter ^lint-"
-elif command -v guix >/dev/null 2>&1; then SCAN="guix shell ast-grep -- ast-grep scan -c $JAT/sgconfig.yml --filter ^lint-"
+if command -v ast-grep >/dev/null 2>&1; then SG=ast-grep
+elif command -v guix >/dev/null 2>&1; then SG="guix shell ast-grep -- ast-grep"
 else echo "need ast-grep on PATH (or Guix)" >&2; exit 1; fi
+SG_POLICY=$($SG --help 2>/dev/null | grep -q -- --custom-languages && echo "--custom-languages allow")   # ast-grep 0.50+ opt-in
+SCAN="$SG scan $SG_POLICY -c $JAT/sgconfig.yml --filter ^lint-"
 log() { printf '%s %s\n' "$(date '+%H:%M:%S')" "$*" | tee -a "$OUT/run.log"; }
 lint_hits() { $SCAN "$1/src" "$1/test" 2>/dev/null | grep -c -E '^(warning|error)\[' || true; }
 

@@ -45,11 +45,12 @@ done
 echo "Total corpus size: ${TOTAL_FILES} Julia source files."
 
 echo ""
+SG_POLICY=$(ast-grep --help 2>/dev/null | grep -q -- --custom-languages && echo "--custom-languages allow")
 echo "==> 1. Running ast-grep scan across corpus..."
 AST_START=$(date +%s)
 for DIR in "${TARGET_DIRS[@]}"; do
     echo "  Scanning ${DIR}..."
-    ast-grep scan -c "${SG_CONFIG}" "${DIR}" > /dev/null
+    ast-grep scan ${SG_POLICY} -c "${SG_CONFIG}" "${DIR}" > /dev/null
 done
 AST_END=$(date +%s)
 echo "  ✓ ast-grep completed with 0 errors in $((AST_END - AST_START))s."
@@ -69,13 +70,13 @@ echo "  ✓ Universal Ctags completed in $((CTAGS_END - CTAGS_START))s: generate
 echo ""
 echo "==> 3. Sampling detected AST constructs in corpus..."
 echo -n "  Total struct definitions: "
-ast-grep run -c "${SG_CONFIG}" -k struct_definition "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
+ast-grep run ${SG_POLICY} -c "${SG_CONFIG}" -k struct_definition "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
 
 echo -n "  Total function definitions: "
-ast-grep run -c "${SG_CONFIG}" -k function_definition "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
+ast-grep run ${SG_POLICY} -c "${SG_CONFIG}" -k function_definition "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
 
 echo -n "  Total parametric methods (where): "
-ast-grep run -c "${SG_CONFIG}" -k where_expression "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
+ast-grep run ${SG_POLICY} -c "${SG_CONFIG}" -k where_expression "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
 
 echo ""
 echo "========================================================"

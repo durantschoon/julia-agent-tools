@@ -35,16 +35,19 @@ if [[ $# -eq 0 ]]; then
     usage
 fi
 
+# ast-grep 0.50+ needs an explicit opt-in for native custom languages; older versions reject the option.
+SG_POLICY=$(ast-grep --help 2>/dev/null | grep -q -- --custom-languages && echo "--custom-languages allow")
+
 COMMAND="$1"
 shift
 
 case "${COMMAND}" in
     scan)
         TARGET="${1:-.}"
-        ast-grep scan -c "${SG_CONFIG}" "${TARGET}"
+        ast-grep scan ${SG_POLICY} -c "${SG_CONFIG}" "${TARGET}"
         ;;
     run)
-        ast-grep run -c "${SG_CONFIG}" "$@"
+        ast-grep run ${SG_POLICY} -c "${SG_CONFIG}" "$@"
         ;;
     tags)
         TARGET="${1:-.}"

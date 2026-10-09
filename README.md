@@ -28,6 +28,13 @@ make dylib
 make test-ast
 ```
 
+ast-grep 0.50 and later refuse to load native custom-language libraries
+(this grammar is one) unless asked. The Makefile, the CLI and the Julia
+package pass `--custom-languages allow` when the installed ast-grep knows the
+option. If you call `ast-grep` yourself, add `--custom-languages allow`, or
+run `ast-grep scan --custom-languages trust -c sgconfig.yml .` once to
+remember this project.
+
 ### Pre-Configured Rule Catalogue (`rules/`)
 
 | Rule ID | Description | Match Kind |

@@ -48,6 +48,17 @@ end
 
 Execute `ast-grep` against Julia source code using the configured Tree-sitter grammar.
 """
+"""
+    ast_grep_policy(sg)
+
+The `--custom-languages allow` arguments when this ast-grep knows the option (0.50 and
+later refuse native custom-language libraries without it); empty for older versions.
+"""
+function ast_grep_policy(sg)
+    help = try read(`$sg --help`, String) catch; "" end
+    occursin("--custom-languages", help) ? ["--custom-languages", "allow"] : String[]
+end
+
 function run_ast_grep(; pattern::Union{Nothing, String}=nothing, kind::Union{Nothing, String}=nothing, path::String=".")
     sg = Sys.which("ast-grep")
     if sg === nothing
@@ -57,7 +68,7 @@ function run_ast_grep(; pattern::Union{Nothing, String}=nothing, kind::Union{Not
         error("ast-grep (or sg) not found on PATH. Install via `brew install ast-grep` or `cargo install ast-grep`.")
     end
 
-    cmd_args = String[sg, "run", "-c", SG_CONFIG]
+    cmd_args = String[sg, "run", ast_grep_policy(sg)..., "-c", SG_CONFIG]
     if kind !== nothing
         push!(cmd_args, "-k", kind)
     end
@@ -83,7 +94,7 @@ function run_ast_lint(path::String=".")
         error("ast-grep (or sg) not found on PATH.")
     end
 
-    run(`$sg scan -c $SG_CONFIG $path`)
+    run(Cmd(String[sg, "scan", ast_grep_policy(sg)..., "-c", SG_CONFIG, path]))
 end
 
 """
