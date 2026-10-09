@@ -44,11 +44,6 @@ function is_type_stable(f, argtypes::Tuple)
 end
 
 """
-    run_ast_grep(; pattern=nothing, kind=nothing, path=".")
-
-Execute `ast-grep` against Julia source code using the configured Tree-sitter grammar.
-"""
-"""
     ast_grep_policy(sg)
 
 The `--custom-languages allow` arguments when this ast-grep knows the option (0.50 and
@@ -59,6 +54,11 @@ function ast_grep_policy(sg)
     occursin("--custom-languages", help) ? ["--custom-languages", "allow"] : String[]
 end
 
+"""
+    run_ast_grep(; pattern=nothing, kind=nothing, path=".")
+
+Execute `ast-grep` against Julia source code using the configured Tree-sitter grammar.
+"""
 function run_ast_grep(; pattern::Union{Nothing, String}=nothing, kind::Union{Nothing, String}=nothing, path::String=".")
     sg = Sys.which("ast-grep")
     if sg === nothing
