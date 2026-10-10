@@ -45,7 +45,7 @@ done
 echo "Total corpus size: ${TOTAL_FILES} Julia source files."
 
 echo ""
-SG_POLICY=$(ast-grep --help 2>/dev/null | grep -q -- --custom-languages && echo "--custom-languages allow")
+SG_POLICY=$(ast-grep --help 2>/dev/null | grep -q -- --custom-languages && echo "--custom-languages allow" || true)   # || true: under set -e a failed grep (old ast-grep) must not kill the script
 echo "==> 1. Running ast-grep scan across corpus..."
 AST_START=$(date +%s)
 for DIR in "${TARGET_DIRS[@]}"; do

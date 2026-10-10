@@ -36,7 +36,7 @@ if [[ $# -eq 0 ]]; then
 fi
 
 # ast-grep 0.50+ needs an explicit opt-in for native custom languages; older versions reject the option.
-SG_POLICY=$(ast-grep --help 2>/dev/null | grep -q -- --custom-languages && echo "--custom-languages allow")
+SG_POLICY=$(ast-grep --help 2>/dev/null | grep -q -- --custom-languages && echo "--custom-languages allow" || true)   # || true: under set -e a failed grep (old ast-grep) must not kill the script
 
 COMMAND="$1"
 shift
