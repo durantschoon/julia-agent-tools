@@ -1,8 +1,8 @@
-# Two of the mistakes the lint rules catch, for the demo recording.
+# Two of the mistakes the lint rules catch, plus one parametric method for the
+# structural-search scene. Used by docs/demo.tape.
 struct Particle
     pos
     vel::AbstractVector
 end
 
-move(p::Particle, dt::Real) = Particle(p.pos .+ dt .* p.vel, p.vel)
-move(p::Particle, dt::T) where {T <: Real} = Particle(p.pos .+ dt .* p.vel, p.vel)
+speed(v::AbstractVector{T}) where {T <: Real} = sqrt(sum(abs2, v))
