@@ -47,7 +47,22 @@ case "${COMMAND}" in
         ast-grep scan ${SG_POLICY} -c "${SG_CONFIG}" "${TARGET}"
         ;;
     run)
-        ast-grep run ${SG_POLICY} -c "${SG_CONFIG}" "$@"
+        # `run -k KIND [PATHS...] [ast-grep scan flags]` searches by AST node kind through an
+        # inline rule (ast-grep's own `run` has no kind option); anything else is a plain
+        # pattern search passed to `ast-grep run`.
+        KIND=""; REST=()
+        while [[ $# -gt 0 ]]; do
+            case "$1" in
+                -k|--kind) KIND="$2"; shift 2 ;;
+                *) REST+=("$1"); shift ;;
+            esac
+        done
+        if [[ -n "$KIND" ]]; then
+            RULE=$(printf 'id: kind-%s\nlanguage: julia\nseverity: info\nmessage: %s\nrule:\n  kind: %s' "$KIND" "$KIND" "$KIND")
+            ast-grep scan ${SG_POLICY} -c "${SG_CONFIG}" --inline-rules "$RULE" "${REST[@]}"
+        else
+            ast-grep run ${SG_POLICY} -c "${SG_CONFIG}" "${REST[@]}"
+        fi
         ;;
     tags)
         TARGET="${1:-.}"

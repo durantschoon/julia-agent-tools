@@ -70,13 +70,13 @@ echo "  ✓ Universal Ctags completed in $((CTAGS_END - CTAGS_START))s: generate
 echo ""
 echo "==> 3. Sampling detected AST constructs in corpus..."
 echo -n "  Total struct definitions: "
-ast-grep run ${SG_POLICY} -c "${SG_CONFIG}" -k struct_definition "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
+"${ROOT_DIR}/bin/julia-agent-tools" run -k struct_definition "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
 
 echo -n "  Total function definitions: "
-ast-grep run ${SG_POLICY} -c "${SG_CONFIG}" -k function_definition "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
+"${ROOT_DIR}/bin/julia-agent-tools" run -k function_definition "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
 
 echo -n "  Total parametric methods (where): "
-ast-grep run ${SG_POLICY} -c "${SG_CONFIG}" -k where_expression "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
+"${ROOT_DIR}/bin/julia-agent-tools" run -k where_expression "${TARGET_DIRS[@]}" --json=compact | grep -o '\"text\"' | wc -l | tr -d ' ' || true
 
 echo ""
 echo "========================================================"

@@ -68,14 +68,14 @@ function run_ast_grep(; pattern::Union{Nothing, String}=nothing, kind::Union{Not
         error("ast-grep (or sg) not found on PATH. Install via `brew install ast-grep` or `cargo install ast-grep`.")
     end
 
-    cmd_args = String[sg, "run", ast_grep_policy(sg)..., "-c", SG_CONFIG]
-    if kind !== nothing
-        push!(cmd_args, "-k", kind)
+    # ast-grep's `run` only searches by pattern; a node kind goes through an inline scan rule.
+    cmd_args = if kind !== nothing
+        rule = "id: kind-$kind\nlanguage: julia\nseverity: info\nmessage: $kind\nrule:\n  kind: $kind"
+        String[sg, "scan", ast_grep_policy(sg)..., "-c", SG_CONFIG, "--inline-rules", rule, path]
+    else
+        pattern === nothing && error("run_ast_grep needs a `pattern` or a `kind`")
+        String[sg, "run", ast_grep_policy(sg)..., "-c", SG_CONFIG, "-p", pattern, path]
     end
-    if pattern !== nothing
-        push!(cmd_args, "-p", pattern)
-    end
-    push!(cmd_args, path)
 
     run(Cmd(cmd_args))
 end
