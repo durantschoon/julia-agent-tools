@@ -1,14 +1,14 @@
 # julia-agent-tools
 
-High-performance Developer & LLM Agent Tooling for Julia.
+High-performance developer tooling and LLM coding agent infrastructure for Julia. Enables architectural code intelligence via [graphify](https://github.com/Graphify-Labs/graphify), structural AST search & linting via `ast-grep`, and Universal Ctags navigation.
 
 ![julia-agent-tools demo](docs/demo.gif)
 
 Provides:
-- **`ast-grep` Tree-Sitter Support for Julia**: Native AST pattern matching, structural search, and structural linting rules for Julia codebases.
-- **Universal Ctags Optlib Rules**: Jump-to-definition tags for Julia abstract types, composite structs (mutable vs immutable), methods, macros, modules, and type aliases.
+- **Code Knowledge Graphs via [graphify](https://github.com/Graphify-Labs/graphify)**: Pairs with graphify (an AST-based code knowledge graph tool) so coding agents can query codebase architecture, function call graphs, and type hierarchies instead of blind grepping.
+- **`ast-grep` Tree-Sitter Support for Julia**: Native AST pattern matching, structural search, and automated linting rules to catch Julia anti-patterns (unintended allocations in hot paths, parametric method slips) in milliseconds.
+- **Universal Ctags Optlib Rules**: Instant jump-to-definition tags for Julia abstract types, composite structs (mutable vs immutable), methods, macros, modules, and type aliases.
 - **Agent Directives & Rules**: Battle-tested drop-ins for `CLAUDE.md`, `AGENTS.md`, Cursor (`.cursorrules`), and Antigravity (`.agents/rules/`, workflows) enforcing type stability, zero-allocation hot paths, and precompilation hygiene.
-- **`graphify` Integration**: Ready-to-use directives and shared Tree-Sitter alignment enabling agents to query architectural knowledge graphs instead of blind grepping.
 - **`JuliaAgentTools.jl` Package**: Standard Julia package API for memory allocation audits, type stability validation, tags generation, and directive installation.
 - **CLI Utility**: `bin/julia-agent-tools` for zero-friction command-line scanning, running, and tagging.
 - **Lessons** ([`docs/lessons.md`](docs/lessons.md)): twelve Julia pitfalls met while building a library with coding agents, each as symptom, cause, rule and example. The directives and `lint-*` rules are drawn from them.
