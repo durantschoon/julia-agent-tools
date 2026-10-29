@@ -2,6 +2,8 @@
 
 High-performance Developer & LLM Agent Tooling for Julia.
 
+![julia-agent-tools demo](docs/demo.gif)
+
 Provides:
 - **`ast-grep` Tree-Sitter Support for Julia**: Native AST pattern matching, structural search, and structural linting rules for Julia codebases.
 - **Universal Ctags Optlib Rules**: Jump-to-definition tags for Julia abstract types, composite structs (mutable vs immutable), methods, macros, modules, and type aliases.
