@@ -8,6 +8,7 @@ Provides:
 - **`ast-grep` Tree-Sitter Support for Julia**: Native AST pattern matching, structural search, and structural linting rules for Julia codebases.
 - **Universal Ctags Optlib Rules**: Jump-to-definition tags for Julia abstract types, composite structs (mutable vs immutable), methods, macros, modules, and type aliases.
 - **Agent Directives & Rules**: Battle-tested drop-ins for `CLAUDE.md`, `AGENTS.md`, Cursor (`.cursorrules`), and Antigravity (`.agents/rules/`, workflows) enforcing type stability, zero-allocation hot paths, and precompilation hygiene.
+- **`graphify` Integration**: Ready-to-use directives and shared Tree-Sitter alignment enabling agents to query architectural knowledge graphs instead of blind grepping.
 - **`JuliaAgentTools.jl` Package**: Standard Julia package API for memory allocation audits, type stability validation, tags generation, and directive installation.
 - **CLI Utility**: `bin/julia-agent-tools` for zero-friction command-line scanning, running, and tagging.
 - **Lessons** ([`docs/lessons.md`](docs/lessons.md)): twelve Julia pitfalls met while building a library with coding agents, each as symptom, cause, rule and example. The directives and `lint-*` rules are drawn from them.
