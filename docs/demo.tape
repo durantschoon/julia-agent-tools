@@ -11,6 +11,11 @@ Set Height 600
 Set Theme "Catppuccin Mocha"
 Set TypingSpeed 40ms
 
+# Enable comments in interactive zsh so '# ...' lines don't trigger command not found
+Hide
+Type "setopt interactive_comments && clear" Enter
+Show
+
 Type "# 1. Lint a file by syntax, not regex: two classic Julia pitfalls" Enter
 Sleep 1s
 Type "cat docs/demo/particle.jl" Enter
