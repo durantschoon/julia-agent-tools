@@ -86,7 +86,7 @@ case "${COMMAND}" in
         ;;
     test)
         echo "==> Running ast-grep rule tests..."
-        ast-grep test -c "${SG_CONFIG}"
+        ast-grep test ${SG_POLICY} -c "${SG_CONFIG}"
         echo "==> Running ctags tests..."
         "${ROOT_DIR}/test/test_ctags.sh"
         echo "==> Running Julia package tests..."

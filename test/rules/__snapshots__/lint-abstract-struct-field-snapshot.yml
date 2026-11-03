@@ -1,0 +1,29 @@
+id: lint-abstract-struct-field
+snapshots:
+  ? |
+    struct BadContainer
+        data::AbstractArray
+        value::Number
+        valid::Float64
+    end
+  : labels:
+    - source: data::AbstractArray
+      style: primary
+      start: 24
+      end: 43
+    - source: |-
+        struct BadContainer
+            data::AbstractArray
+            value::Number
+            valid::Float64
+        end
+      style: secondary
+      start: 0
+      end: 84
+    - source: |
+        data::AbstractArray
+            value::Number
+            valid::Float64
+      style: secondary
+      start: 24
+      end: 81

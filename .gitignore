@@ -5,3 +5,4 @@ vendor/tree-sitter-julia/tree-sitter-julia.dylib
 *.o
 .DS_Store
 graphify-out/
+logs/

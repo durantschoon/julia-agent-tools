@@ -1,0 +1,18 @@
+id: lint-abstract-struct-field
+valid:
+  - |
+    struct Point
+        x::Float64
+        y::Float64
+    end
+  - |
+    struct Samples{T, V <: AbstractVector{T}}
+        data::V
+    end
+invalid:
+  - |
+    struct BadContainer
+        data::AbstractArray
+        value::Number
+        valid::Float64
+    end

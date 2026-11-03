@@ -1,33 +1,61 @@
 # julia-agent-tools
 
-High-performance developer tooling and LLM coding agent infrastructure for Julia. Enables architectural code intelligence via [graphify](https://github.com/Graphify-Labs/graphify), structural AST search & linting via `ast-grep`, and Universal Ctags navigation.
+Drop-in agent directives, AST linters, and developer tooling that make LLM coding agents (Claude Code, Codex, Cursor, Antigravity) write fast, type-stable, zero-allocation Julia.
+
+Out of the box, coding agents routinely fall into Julia-specific traps: measuring `@allocated` at top level (where it measures global variable boxing instead of the function), defining overlapping parametric methods that fail precompilation, or leaving struct fields untyped or abstractly typed. **Installing the directives from this repo into your Julia project gives your agent the rules—and the structural search, linting, knowledge-graph, and runtime auditing tools—to avoid those pitfalls automatically.**
 
 ![julia-agent-tools demo](docs/demo.gif)
 
 Provides:
-- **Code Knowledge Graphs via [graphify](https://github.com/Graphify-Labs/graphify)**: Pairs with graphify (an AST-based code knowledge graph tool) so coding agents can query codebase architecture, function call graphs, and type hierarchies instead of blind grepping.
-- **`ast-grep` Tree-Sitter Support for Julia**: Native AST pattern matching, structural search, and automated linting rules to catch Julia anti-patterns (unintended allocations in hot paths, parametric method slips) in milliseconds.
+- **Agent Directives & Rules (`directives/`)**: Battle-tested drop-ins for Claude Code (`CLAUDE.md`), Codex (`AGENTS.md`), Cursor (`.cursorrules`), and Antigravity (`.agents/rules/` and workflows) enforcing type stability, zero-allocation hot paths, and precompilation hygiene.
+- **Empirical A/B Evaluation ([`docs/ab-measurement.md`](docs/ab-measurement.md)) & Lessons ([`docs/lessons.md`](docs/lessons.md))**: Twelve real-world Julia pitfalls encountered while building a performance-sensitive library with coding agents, plus a reproducible A/B benchmark showing how installing the directives cuts agent-introduced lint and allocation bugs.
+- **Code Knowledge Graphs via [graphify](https://github.com/Graphify-Labs/graphify)**: Pairs with graphify (an AST-based code knowledge graph tool) so coding agents query codebase architecture, function call graphs, and type hierarchies instead of blind grepping.
+- **`ast-grep` Tree-Sitter Support for Julia**: Native AST pattern matching, structural search, and automated linting rules to catch Julia anti-patterns in milliseconds.
 - **Universal Ctags Optlib Rules**: Instant jump-to-definition tags for Julia abstract types, composite structs (mutable vs immutable), methods, macros, modules, and type aliases.
-- **Agent Directives & Rules**: Battle-tested drop-ins for `CLAUDE.md`, `AGENTS.md`, Cursor (`.cursorrules`), and Antigravity (`.agents/rules/`, workflows) enforcing type stability, zero-allocation hot paths, and precompilation hygiene.
-- **`JuliaAgentTools.jl` Package**: Standard Julia package API for memory allocation audits, type stability validation, tags generation, and directive installation.
-- **CLI Utility**: `bin/julia-agent-tools` for zero-friction command-line scanning, running, and tagging.
-- **Lessons** ([`docs/lessons.md`](docs/lessons.md)): twelve Julia pitfalls met while building a library with coding agents, each as symptom, cause, rule and example. The directives and `lint-*` rules are drawn from them.
+- **`JuliaAgentTools.jl` Package & CLI**: Standard Julia package API and `bin/julia-agent-tools` CLI for directive installation, memory allocation audits, type stability validation, AST scanning, and tags generation.
 
 ---
 
-## 1. ast-grep (`sg`) Tree-Sitter Support for Julia
+## 1. Quick Start: Install Agent Directives (`directives/`)
 
-`ast-grep` provides fast structural code search and linting.
+The primary workflow is installing the Julia directives into the repository you and your coding agent are working on:
+
+```bash
+# Via CLI (installs all directives into your target repo):
+./bin/julia-agent-tools install-directives /path/to/my-julia-repo
+
+# Or via Julia (install all, or pick :claude, :codex, :cursor, :antigravity):
+julia --project=. -e 'using JuliaAgentTools; install_directives("/path/to/my-julia-repo"; agent=:claude)'
+```
+
+### What Gets Installed
+- **`directives/claude/CLAUDE.md`**: Tailored for Claude Code. Includes test commands, AST structural search recipes, `graphify` queries, zero-allocation rules, and precompilation hygiene.
+- **`directives/codex/AGENTS.md`**: Operating principles for autonomous Codex/agent workers (disjoint method signatures, compiled allocation scope, static array semantics).
+- **`directives/antigravity/`**: Antigravity rules (`.agents/rules/julia.md`) and workflows (`benchmarking.md`, `type-stability.md`).
+- **`directives/cursor/`**: `.cursorrules` optimized for Julia development.
+- **`ctags.d/julia.ctags`**: Universal Ctags configuration for Julia symbols.
+
+> **Does it actually change what the agent writes?**
+> See [`docs/ab-measurement.md`](docs/ab-measurement.md) for a controlled A/B test across 10 editing tasks comparing a bare repository against one with `install_directives` applied (and [`docs/lessons.md`](docs/lessons.md) for the 12 specific failure modes behind the rules).
+
+---
+
+## 2. ast-grep (`sg`) Tree-Sitter Support for Julia
+
+`ast-grep` provides fast structural code search and linting that both you and your coding agent can run to catch Julia anti-patterns before running tests.
 
 ### Setup & Compilation
 ```bash
-# 1. Install ast-grep
-brew install ast-grep
+# 1. Install ast-grep (pick one for macOS, Linux, or Windows):
+brew install ast-grep                 # macOS / Linuxbrew
+cargo install ast-grep --locked       # Linux / macOS / Windows ( via Rust )
+uv tool install ast-grep-cli          # Linux / macOS / Windows ( or: pipx install ast-grep-cli )
+npm install -g @ast-grep/cli          # Linux / macOS / Windows ( via Node.js )
 
-# 2. Build the Tree-sitter dylib (macOS universal arm64/x86_64 or Linux)
+# 2. Build the Tree-sitter dylib (macOS universal arm64/x86_64 or Linux gcc/clang):
 make dylib
 
-# 3. Run rule tests
+# 3. Run rule tests:
 make test-ast
 ```
 
@@ -75,9 +103,16 @@ remember this project.
 
 ---
 
-## 2. Universal Ctags Optlib (`ctags.d/julia.ctags`)
+## 3. Universal Ctags Optlib (`ctags.d/julia.ctags`)
 
 Brings instant symbol jump-to-definition and token-free agent navigation to Julia codebases.
+
+### Installing Universal Ctags
+```bash
+brew install universal-ctags          # macOS
+sudo apt install universal-ctags      # Ubuntu / Debian (or `pacman -S ctags`, `dnf install ctags`)
+scoop install universal-ctags         # Windows (or `winget install UniversalCtags.Ctags`)
+```
 
 ### Supported Language Kinds
 - `a`: Abstract types (`abstract type ... end`)
@@ -101,25 +136,6 @@ make install-ctags
 
 ---
 
-## 3. LLM Agent Directives (`directives/`)
-
-Drop-in directives for autonomous coding agents:
-- **`directives/claude/CLAUDE.md`**: Tailored for Claude Code agents. Includes test commands, AST structural search recipes, zero-allocation rules, and precompilation hygiene.
-- **`directives/codex/AGENTS.md`**: Operating principles for autonomous codex/agent workers (disjoint method signatures, compiled allocation scope, static array semantics).
-- **`directives/antigravity/`**: Antigravity rules (`.agents/rules/julia.md`) and workflows (`benchmarking.md`, `type-stability.md`).
-- **`directives/cursor/`**: `.cursorrules` optimized for Julia development.
-
-### Installing Directives to a Target Repository
-```bash
-# Via CLI:
-./bin/julia-agent-tools install-directives /path/to/my-julia-repo
-
-# Or via Julia package:
-julia -e 'using JuliaAgentTools; install_directives("/path/to/my-julia-repo")'
-```
-
----
-
 ## 4. `JuliaAgentTools.jl` Julia Package
 
 Use programmatically inside Julia or REPL:
@@ -127,19 +143,19 @@ Use programmatically inside Julia or REPL:
 ```julia
 using JuliaAgentTools
 
-# 1. Zero-allocation verification (immune to dynamic scope capture)
+# 1. Install agent directives (:claude, :codex, :cursor, :antigravity, or :all)
+JuliaAgentTools.install_directives("/path/to/target/repo"; agent=:all)
+
+# 2. Zero-allocation verification (immune to dynamic scope capture)
 my_mul(a, b) = a * b
 bytes = audit_allocations(my_mul, 1.5, 2.5)
 @assert bytes == 0 "Detected allocation!"
 
-# 2. Type stability auditing
+# 3. Type stability auditing
 is_stable = is_type_stable(my_mul, (Float64, Float64)) # returns true
 
-# 3. Generate Universal Ctags
+# 4. Generate Universal Ctags
 JuliaAgentTools.generate_tags("src"; output="tags")
-
-# 4. Install agent directives
-JuliaAgentTools.install_directives("/path/to/target/repo"; agent=:all)
 ```
 
 ---
@@ -157,11 +173,10 @@ make test-corpus
 ```
 
 Expected output:
-- `ast-grep`: 17 passed, 0 failed.
+- `ast-grep`: 18 passed, 0 failed.
 - Universal Ctags: all tag assertions passed.
 - `JuliaAgentTools`: 13 passed, 0 failed.
 - Corpus stress-testing: 63+ real-world files scanned with 0 errors across thousands of AST constructs.
-
 
 ---
 

@@ -105,7 +105,7 @@ Generate a `tags` file for the given directory using Universal Ctags with Julia 
 function generate_tags(dir::String="."; output::String="tags")
     ctags_bin = Sys.which("ctags")
     if ctags_bin === nothing
-        error("Universal Ctags not found on PATH. Install via `brew install universal-ctags`.")
+        error("Universal Ctags not found on PATH. Install via `brew install universal-ctags`, `apt install universal-ctags`, or your system package manager.")
     end
 
     cmd = `$ctags_bin --options=$CTAGS_OPT -f $output -R $dir`
