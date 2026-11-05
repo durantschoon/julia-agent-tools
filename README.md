@@ -38,6 +38,13 @@ julia --project=. -e 'using JuliaAgentTools; install_directives("/path/to/my-jul
 > **Does it actually change what the agent writes?**
 > See [`docs/ab-measurement.md`](docs/ab-measurement.md) for a controlled A/B test across 10 editing tasks comparing a bare repository against one with `install_directives` applied (and [`docs/lessons.md`](docs/lessons.md) for the 12 specific failure modes behind the rules).
 
+These tools are intended as a practical reliability layer, especially when
+you do not have access to the strongest models or want to use smaller, lower-
+cost models as spawned coding agents. Frontier models may increasingly handle
+Julia idioms without as much explicit guidance, but model capability varies
+today, and even capable models can benefit from project-specific instructions
+and fast, deterministic checks.
+
 ---
 
 ## 2. ast-grep (`sg`) Tree-Sitter Support for Julia
