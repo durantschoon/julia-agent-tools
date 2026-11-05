@@ -47,9 +47,10 @@ and fast, deterministic checks.
 
 Want to see whether they help on your code? Pick one concrete Julia problem—a
 precompilation failure, a flagged struct field, or a hot loop with type
-instability or unexpected allocations. Ask your agent to fix it, then rerun
-the relevant test, lint, or allocation check. For a useful comparison, try
-the same task before and after installing the directives.
+instability or unexpected allocations. Ask your agent to fix it, then inspect
+inferred return types and allocations and rerun the relevant test, lint, or
+allocation check. For a useful comparison, try the same task before and after
+installing the directives.
 
 ---
 
