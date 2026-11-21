@@ -1,3 +1,7 @@
+# A package's manifest is specific to the Julia version that resolved it;
+# committing one breaks `Pkg.test()` on every other version.
+Manifest.toml
+
 # Build artifacts
 vendor/tree-sitter-julia/tree-sitter-julia.dylib
 *.dylib
