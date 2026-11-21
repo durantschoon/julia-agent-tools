@@ -52,5 +52,8 @@ jobs:
       - name: Run Universal Ctags Tests
         run: make test-ctags
 
+      - name: Run Model Probe Self-Test
+        run: make test-probes
+
       - name: Run Julia Package Tests
         uses: julia-actions/julia-runtest@v1

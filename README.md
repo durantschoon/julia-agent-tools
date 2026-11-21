@@ -52,6 +52,11 @@ inferred return types and allocations and rerun the relevant test, lint, or
 allocation check. For a useful comparison, try the same task before and after
 installing the directives.
 
+Not every model makes every mistake. [`docs/model-probes.md`](docs/model-probes.md)
+is a short probe for one of them, untyped or abstract struct fields: five
+small tasks and a checker you can run on any model and harness, with a table
+of results so far.
+
 ---
 
 ## 2. ast-grep (`sg`) Tree-Sitter Support for Julia
@@ -189,6 +194,7 @@ make test-corpus
 Expected output:
 - `ast-grep`: 18 passed, 0 failed.
 - Universal Ctags: all tag assertions passed.
+- Model probe self-test: the flagged control has 2 hits, the clean reference 0.
 - `JuliaAgentTools`: 13 passed, 0 failed.
 - Corpus stress-testing: 63+ real-world files scanned with 0 errors across thousands of AST constructs.
 

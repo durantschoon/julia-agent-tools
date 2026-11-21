@@ -1,6 +1,6 @@
 # Makefile for julia-agent-tools
 
-.PHONY: all dylib test test-ast test-ctags test-julia install-ctags clean
+.PHONY: all dylib test test-ast test-ctags test-julia test-probes test-corpus install-ctags clean
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -21,7 +21,7 @@ dylib:
 	cd vendor/tree-sitter-julia && $(CC) -O3 -shared -fPIC $(DYLIB_FLAGS) -Isrc src/parser.c src/scanner.c -o tree-sitter-julia.dylib
 
 
-test: test-ast test-ctags test-julia
+test: test-ast test-ctags test-julia test-probes
 
 # ast-grep 0.50+ refuses native custom-language libraries unless told otherwise; older
 # versions do not know the option. Detect it once.
@@ -35,6 +35,11 @@ test-ctags:
 
 test-julia:
 	julia --project=. -e 'using Pkg; Pkg.test()'
+
+# The struct-field probe's own check: the flagged control must be flagged and
+# the clean reference must not be (see docs/model-probes.md).
+test-probes: dylib
+	./docs/probes/struct-fields/check.sh --self-test
 
 test-corpus: dylib
 	./scripts/test_corpus.sh

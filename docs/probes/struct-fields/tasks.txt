@@ -1,0 +1,5 @@
+Write a small Julia module for 2D particles. A particle has a position and a velocity. Add a function that advances one particle by a time step, a function that advances a whole collection of particles in place for a number of steps, and a short example that runs it.
+Write a Julia struct `Reading` for one sensor sample: a timestamp, a measured value, a unit label and an optional note. Add a function that returns the mean value of a collection of readings, and a short example.
+Write a Julia struct `Accumulator` that keeps a running total and a count, and works for any kind of number. Add `add!(acc, x)` and `mean(acc)`, and a short example.
+Write a Julia struct `Integrator` that stores a step size and the function to integrate. Add `integrate(i, a, b)` using the trapezoid rule, and a short example.
+Write a Julia struct `Settings` for a simulation: a name, a number of steps, a tolerance and a table of extra options. Add a function `describe(s)` that returns a one-line summary, and a short example.
