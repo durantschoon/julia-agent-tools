@@ -13,12 +13,16 @@ echo "========================================================"
 
 mkdir -p "${TMP_CORPUS}"
 
-# Target repositories: local repositories first
+# Target repositories: local repositories first.
+# An optional local Julia project adds to the corpus. Point CORPUS_LOCAL_DIR at
+# its root; by default a gafro-julia checkout next to this repository is used
+# when one exists.
 TARGET_DIRS=()
+CORPUS_LOCAL_DIR="${CORPUS_LOCAL_DIR:-${ROOT_DIR}/../gafro-julia}"
 
-if [[ -d "${ROOT_DIR}/../gafro-julia/src" ]]; then
-    echo "Found local gafro-julia repository."
-    TARGET_DIRS+=("${ROOT_DIR}/../gafro-julia/src")
+if [[ -d "${CORPUS_LOCAL_DIR}/src" ]]; then
+    echo "Found local corpus repository: ${CORPUS_LOCAL_DIR}"
+    TARGET_DIRS+=("${CORPUS_LOCAL_DIR}/src")
 fi
 
 # Clone StaticArrays.jl shallow clone for heavy metaprogramming coverage if git remote is reachable
