@@ -17,16 +17,19 @@ Measure the heap memory allocated by executing `f(args...)` with zero REPL/globa
 Runs a warmup execution first to ensure JIT compilation overhead is excluded.
 Returns the total bytes allocated.
 """
-function audit_allocations(f::F, args...) where {F}
-    # JIT warm-up execution
-    f(args...)
+function audit_allocations(f::F, args::Vararg{Any, N}) where {F, N}
+    # Warm-up execution: compiles `f` and the measuring specialization.
+    _measure_allocations(f, args...)
 
-    # Local function barrier to prevent dynamic boxing
-    @noinline function _measure_allocs(fn::F, xs...) where {F}
-        return @allocated fn(xs...)
-    end
+    return _measure_allocations(f, args...)
+end
 
-    return _measure_allocs(f, args...)
+# Function barrier for the measurement. `Vararg{Any, N}` with a bound `N` makes
+# Julia specialize on every argument type. A plain `args...` that is only passed
+# through is not specialized: the call to `f` is then dispatched at run time and
+# its result is boxed, which before Julia 1.12 showed up as 16 spurious bytes.
+@noinline function _measure_allocations(f::F, args::Vararg{Any, N}) where {F, N}
+    return @allocated f(args...)
 end
 
 """

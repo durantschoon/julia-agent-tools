@@ -10,6 +10,13 @@ using JuliaAgentTools
         # Allocating heap array
         alloc_fn(n) = Vector{Float64}(undef, n)
         @test audit_allocations(alloc_fn, 100) > 0
+
+        # Arguments of different types must not add dispatch or boxing cost
+        mixed_fn(a, b, c) = a + b * c
+        @test audit_allocations(mixed_fn, 1, 2.0, 0x03) == 0
+
+        # No arguments at all
+        @test audit_allocations(() -> 1.5) == 0
     end
 
     @testset "Type Stability Checker" begin
