@@ -58,7 +58,10 @@ You need `ast-grep` and the Julia grammar (`make dylib`); see the README.
    ```
 
    `PASS` means no field was flagged. `FLAGGED` lists each hit with its rule.
-   The exit status is 1 when anything is flagged.
+   The exit status is 1 when anything is flagged. A scan that cannot run
+   finds nothing, which would look like a pass, so the checker first confirms
+   that the flagged control still gets its two hits and stops with status 2
+   if it does not.
 
 4. Optional: install the directives into a second empty directory
    (`./bin/julia-agent-tools install-directives <dir>`), repeat, and compare.
