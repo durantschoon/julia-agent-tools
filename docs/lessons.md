@@ -254,3 +254,54 @@ Each lesson is laid out as **symptom**, **cause**, **rule**, **example**.
   length(methods(f))                                  # 2
   @test all(m -> m.sig <: Tuple{typeof(f), Any, Any, Vararg}, methods(f))
   ```
+
+## 13. A hardware test must fail when the hardware is missing
+
+- **Symptom**: a GPU test suite is green on a machine with no usable GPU, or
+  on one whose GPU is listed by the driver tools but cannot be initialised.
+- **Cause**: the tests guard each device call with `if !available; return;
+  end`. A test that returns early counts as a pass, so the run proves
+  nothing about the device.
+- **Rule**: make the hardware suite its own entry point and have it raise
+  when no functional device exists. Keep the "no device" behaviour as a
+  separate test, and run that one on a GPU machine too by hiding the device.
+  When a device is unexpectedly unavailable, ask for the reason before
+  touching the code: `CUDA.functional(true)` throws the underlying error
+  where `CUDA.functional()` only returns `false`.
+- **Example**:
+  ```julia
+  using Test, CUDA
+
+  # Hardware suite: no device is an error, never a skip.
+  CUDA.functional() || error("no functional CUDA device; no hardware tests ran")
+  @testset "device results match the CPU" begin
+      x = rand(Float32, 1024)
+      @test Array(CuArray(x) .* 2) ≈ x .* 2
+  end
+  ```
+  ```sh
+  # The same machine can run the no-device branch.
+  CUDA_VISIBLE_DEVICES="" julia --project test/no_device.jl
+  ```
+
+## 14. A package-manager crash under CPU emulation is not a dependency bug
+
+- **Symptom**: `Pkg.add` or `Pkg.test` dies with `signal 11` while
+  downloading artifacts or precompiling, and the same command passes on a
+  rerun or on another machine.
+- **Cause**: the process is an x86-64 Julia running under CPU emulation, for
+  example an x86-64 Linux container on an ARM laptop. The crash is in the
+  runtime, not in the package being installed.
+- **Rule**: before recording that a dependency "does not install" on some
+  Julia version, check whether the CPU is emulated, and reproduce on native
+  hardware. Write the environment down next to the result. A crash log that
+  omits it sends the next reader after the wrong cause.
+- **Example**:
+  ```julia
+  # On Linux, an emulated x86-64 guest on Apple silicon reports itself.
+  emulated = Sys.islinux() && occursin("VirtualApple", read("/proc/cpuinfo", String))
+  emulated && @warn "x86-64 under emulation: treat crashes here as environmental"
+  ```
+  Package manager output is also buffered when it is not a terminal, so a
+  log that has been silent for minutes may belong to a healthy install.
+  Look for live precompilation workers with `ps` before calling it hung.
